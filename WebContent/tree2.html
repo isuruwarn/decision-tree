@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+<META http-equiv=Content-Type content="text/html; charset=utf-8">
+<style type="text/css">
+
+	.node {
+		-webkit-transition: -webkit-transform 2s; /* Safari */
+    	transition: transform 2s;
+    	animation: popup 10s 6.5s ease infinite;
+    	font-family: "Arial, Helvetica, sans-serif";
+    	font-size: 10px;
+	}
+	
+	
+</style>
+
+
+
+<script>
+
+var LIGHT_BLUE = "#E0ECF8";
+var LIGHT_RED = "#F5A9A9";
+var LIGHT_GRAY = "#585858";
+
+function toggle( obj ) {
+	
+	//console.log("Object = " + obj.id);
+	
+	//document.getElementById("r1").setAttribute("transform", "translate(75,25)");
+	
+	if( obj.getAttribute("fill") === LIGHT_BLUE ) {
+		obj.setAttribute("fill", LIGHT_RED);
+	} else {
+		obj.setAttribute("fill", LIGHT_BLUE);
+	}
+	
+}
+
+
+/*
+var svg = document.getElementById("svgtree");
+var svgDoc = svg.contentDocument;
+var line = svgDoc.getElementById("l1");
+//line.setAttributeNS(null, "d" "M 250 60 C260,120 350,50 350,140");
+document.getElementById("l1").setAttribute("d", "M 250 60 C260,120 350,50 350,140");
+*/
+
+var treee = { 
+			name: "apple-bottom jeans", 
+			children: [ 
+				{ 
+					name: "not a shorty", 
+					children: null 
+					}, 
+				{ 
+					name: "boots with fur",
+					children: [ 
+						{ 
+							name: "not a shorty",
+							children: null
+							}, 
+						{
+							name: "whole club looking",
+							children: [
+								{
+									name: "not a shorty",
+									children: null
+									},
+								{
+									name: "hit the floor",
+									children: [
+										{
+											name: "not a shorty",
+											children: null
+											},
+										{
+											name: "got low",
+											children: [
+												{
+													name: "not a shorty",
+													children: null
+													},
+												{
+													name: "is a shorty!",
+													children: null
+													}
+												]
+											}
+										]
+									}
+								]
+							} 
+						] 
+					} 
+				]  
+			};
+
+
+
+</script>
+
+</head>
+
+<body>
+
+<svg id="svgtree" height="1000" width="1000">
+	<!--circle id="r1" class="node" cx="250" cy="50" r="10" stroke="black" stroke-width="1" fill="red" onclick="toggle(this)" />
+	<circle id="c2" class="node" cx="150" cy="150" r="10" stroke="black" stroke-width="1" fill="blue" onclick="toggle(this)" />
+	<circle id="c3" class="node" cx="350" cy="150" r="10" stroke="black" stroke-width="1" fill="blue" onclick="toggle(this)" /-->
+	<!--path id="l1" class="node" d="M 250 60 C250,130 350,50 350,140" stroke="gray" stroke-width="2" fill="none" />
+	<path id="l2" class="node" d="M 250 60 C250,130 150,50 150,140" stroke="gray" stroke-width="2" fill="none" />
+	<path id="l3" class="node" d="M 350 160 C350,230 450,150 450,240" stroke="gray" stroke-width="2" fill="none" />
+	<path id="l4" class="node" d="M 350 160 C350,230 250,150 250,240" stroke="gray" stroke-width="2" fill="none" />
+	<path id="l5" class="node" d="M 450 260 C450,330 550,250 550,340" stroke="gray" stroke-width="2" fill="none" />
+	<path id="l6" class="node" d="M 450 260 C450,330 350,250 350,340" stroke="gray" stroke-width="2" fill="none" /-->
+	
+	
+	<!--animate xlink:href="#l1"
+    	attributeName="d"
+    	attributeType="XML"
+    	from="M 250 60 C250,60 250,60 250,60"
+        to="M 250 60 C260,120 350,50 350,140"
+    	dur="1s"
+    	fill="freeze" /-->
+    
+    
+    <g transform="translate(250,50)" class="node">
+    	<circle id="r1" r="10" stroke="black" stroke-width="1" fill="red" onclick="toggle(this)"/>
+    	<text dx="20" dy="5">Node 1</text>
+    </g>
+    
+    <g transform="translate(150,150)" class="node">
+    	<circle id="r2" r="10" stroke="black" stroke-width="1" fill="red" onclick="toggle(this)"/>
+    	<text  dx="20" dy="5">Node 2</text>
+	</g>
+	    
+    <g transform="translate(350,150)" class="node">
+    	<circle id="r3" r="10" stroke="black" stroke-width="1" fill="red" onclick="toggle(this)"/>
+    	<text  dx="20" dy="5">Node 3</text>
+    </g>
+    
+    
+</svg>
+
+</body>
+
+<script>
+
+/*
+http://www.i-programmer.info/programming/graphics-and-imaging/3254-svg-javascript-and-the-dom.html
+
+*/
+
+var svg = document.getElementById("svgtree");
+
+//<circle id="c3" class="node" cx="350" cy="150" r="10" stroke="black" stroke-width="1" fill="blue" onclick="toggle(this)" />
+
+var circle = function( id, cx, cy, r, text ) {
+	 var NS="http://www.w3.org/2000/svg";
+	 var SVGObj = document.createElementNS( NS, "circle" );
+	 SVGObj.id = "c" + id;
+	 SVGObj.cx.baseVal.value = cx;
+	 SVGObj.cy.baseVal.value = cy;
+	 SVGObj.r.baseVal.value = r;
+	 SVGObj.setAttribute( "onclick", "toggle(this)" );
+	 SVGObj.setAttribute( "fill", LIGHT_BLUE );
+	 SVGObj.setAttribute( "stroke", LIGHT_GRAY );
+	 SVGObj.setAttribute( "stroke-width", "1" );
+	 SVGObj.setAttribute( "text", id );
+	 return SVGObj;
+}
+
+
+//   originX  originY+r		originX	   p	destX 	originY	  destX   destY
+// M    250       60 	C	250,     130    350,      50      350,    140
+var path = function( id, originX, originY, r, p, destX, destY ) {
+	 var NS="http://www.w3.org/2000/svg";
+	 var SVGObj = document.createElementNS( NS, "path" );
+	 SVGObj.id = "link" + id;
+	 SVGObj.setAttribute( "d", "M " + originX + " " + ( originY + r ) + "C" + originX + "," + p + " " + destX + "," + originY + " " + destX + "," + destY );
+	 SVGObj.setAttribute( "fill", "none" );
+	 SVGObj.setAttribute( "stroke", LIGHT_GRAY );
+	 SVGObj.setAttribute( "stroke-width", "2" );
+	 return SVGObj;
+}
+
+var n1 = circle( 1, 250, 50, 10 );
+var n2 = circle( 2, 350, 150, 10 );
+var n3 = circle( 3, 150, 150, 10 );
+var n4 = circle( 4, 450, 250, 10 );
+var n5 = circle( 5, 250, 250, 10 );
+var n6 = circle( 6, 350, 350, 10 );
+var n7 = circle( 7, 550, 350, 10 );
+
+/* svg.appendChild(n1);
+svg.appendChild(n2);
+svg.appendChild(n3);
+svg.appendChild(n4);
+svg.appendChild(n5);
+svg.appendChild(n6);
+svg.appendChild(n7); */
+
+var l1 = path( 1, 250, 50, 10, 130, 350, 140 );
+var l2 = path( 2, 250, 50, 10, 130, 150, 140 );
+var l3 = path( 3, 350, 150, 10, 230, 450, 240 );
+var l4 = path( 4, 350, 150, 10, 230, 250, 240 );
+var l5 = path( 5, 450, 250, 10, 330, 550, 340 );
+var l6 = path( 6, 450, 250, 10, 330, 350, 340 );
+
+/* svg.appendChild(l1);
+svg.appendChild(l2);
+svg.appendChild(l3);
+svg.appendChild(l4);
+svg.appendChild(l5);
+svg.appendChild(l6); */
+
+
+
+function parseTree( node ) {
+	
+}
+
+
+</script>
+
+
+</html>

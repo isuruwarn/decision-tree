@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	<META http-equiv=Content-Type content="text/html; charset=utf-8">
+	
+	<script src="js/data.js"></script>
+	
+	<style type="text/css">
+	
+		.node {
+	    	font-family: "Arial, Helvetica, sans-serif";
+	    	font-size: 10px;
+		}
+		
+	</style>
+
+</head>
+
+<body>
+<!--svg id="svg" height="1000" width="1000"></svg-->
+</body>
+
+	<script>
+		
+		var NS = "http://www.w3.org/2000/svg";
+		var LIGHT_BLUE = "#E0ECF8";
+		var LIGHT_RED = "#F5A9A9";
+		var LIGHT_GRAY = "#585858";
+		var NODE_WIDTH = 200;
+		var NODE_HEIGHT = 100;
+		
+		var data = tree2;
+		var nodeMap = {};
+		
+		var svg = document.createElementNS(NS,"svg");
+		svg.setAttribute( "height", "1000" );
+		svg.setAttribute( "width", "1000" );
+		document.body.appendChild(svg);
+		
+		generateNodeMap( data, 0 );
+		
+		
+		function generateNodeMap( node, depth ) {
+			
+			nodeMap[node.id] = 0;
+			
+			if( node.children && node.children.length > 0 ) {
+				
+				depth++;
+				var numOfChildren = node.children.length;
+				//var counted = nodeMap[depth] ? nodeMap[depth] : 0; 
+				//nodeMap[depth] = counted + numOfChildren;
+				if( numOfChildren > 1 ) {
+					nodeMap[node.id] = nodeMap[node.id] + ( numOfChildren * 30 );
+				}
+				
+				for( var i=0; i<numOfChildren; i++ ) {
+					var child = node.children[i];
+					generateNodeMap( child, depth );
+					var spaceForChild = nodeMap[child.id] ? nodeMap[child.id] : 0; 
+					nodeMap[node.id] = nodeMap[node.id] + spaceForChild;
+				}
+			}
+		}
+		
+		console.log( JSON.stringify(nodeMap) );
+		
+		parseTree( data, 500, 50, -1, -1, 0 );
+		
+		
+		
+		function parseTree( node, x, y, parentX, parentY, depth ) {
+			
+			var nodeName = node.name ? node.name : node.id
+			//console.log("NodeId: " + nodeName + ", depth=" + depth );
+			addNode( nodeName, x, y, 10, nodeName, parentX, parentY );
+			
+			if( node.children && node.children.length > 0 ) {
+				
+				depth++;
+				var numOfChildren = node.children.length;
+				var distance = 0; // distance between the siblings
+				var xpos = x;
+				var ypos = y + NODE_HEIGHT;
+				NODE_WIDTH = nodeMap[node.id];
+				if( numOfChildren !== 1 ) {
+					xpos = x - ( NODE_WIDTH / 2 );
+					distance = NODE_WIDTH / (numOfChildren-1); 
+				}
+				//console.log("NumOfChildren=" + numOfChildren + ", xpos=" + xpos + ", ypos=" + ypos + ", distance=" + distance );
+				
+				for( var i=0; i<numOfChildren; i++ ) {
+					var child = node.children[i];
+					parseTree( child, xpos, ypos, x, y, depth );
+					xpos = xpos + distance;
+				}
+			}
+		}
+		
+		
+		function addNode( id, x, y, r, text, parentX, parentY ) {
+			
+			var g = document.createElementNS( NS, "g" );
+			g.id = "n" + id;
+			g.setAttribute( "class", "node" );
+			g.setAttribute( "transform", "translate(" + x + "," + y + ")" );
+			
+			 var c = document.createElementNS( NS, "circle" );
+			c.id = "c" + id;
+			c.r.baseVal.value = r;
+			c.setAttribute( "onclick", "toggle(this)" );
+			c.setAttribute( "fill", LIGHT_BLUE );
+			c.setAttribute( "stroke", LIGHT_GRAY );
+			c.setAttribute( "stroke-width", "1" );
+			
+			var t = document.createElementNS( NS, "text" );
+			t.setAttribute( "dx", "11" );
+			t.setAttribute( "dy", "5" );
+			t.textContent = "" + text;
+			
+			g.appendChild(c);
+			g.appendChild(t);
+			
+			// add links
+			if( parentX !== -1 ) {
+				
+				var originX = parentX;
+				var originY = parentY;
+				var r = 10;
+				var p = (y-20);
+				var destX = x;
+				var destY = (y-10);
+				//console.log("adding link: originX=" + originX + ", originY=" + originY + ", p=" + p + ", destX=" + destX + ", destY=" + destY);
+				
+				var l = document.createElementNS( NS, "path" );
+				l.id = "link" + id;
+				l.setAttribute( "d", "M " + originX + " " + ( originY + r ) + "C" + originX + "," + p + " " + destX + "," + originY + " " + destX + "," + destY );
+				l.setAttribute( "fill", "none" );
+				l.setAttribute( "stroke", LIGHT_GRAY );
+				l.setAttribute( "stroke-width", "1" );
+				svg.appendChild(l);
+			}
+			
+			svg.appendChild(g);
+			return g;
+		}
+		
+		
+		function toggle( obj ) {
+			if( obj.getAttribute("fill") === LIGHT_BLUE ) {
+				obj.setAttribute("fill", LIGHT_RED);
+			} else {
+				obj.setAttribute("fill", LIGHT_BLUE);
+			}
+		}
+		
+		
+	</script>
+
+
+
+</html>
